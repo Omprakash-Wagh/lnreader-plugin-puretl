@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor & IDE directories
+.vscode/
+.idea/
+.history/
+*.swp
+*.swo
+
+# Environment & local settings
+.env
+.env.*
+config.json
+
+# Operating System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Temporary test scripts & reports
+*.tmp
+temp-*.cjs
+test-report.json
+broken-sites-report.json
+
+# AI & Editor tooling directories
+.agents/
+.claude/
+.cursor/
+
+# NOTE: .dist and .js are intentionally TRACKED in this custom repository
+# so that LNReader can download the manifest (.dist/plugins.min.json) and
+# compiled plugin bundle (.js/src/plugins/english/pureLoveTranslations.js)
+# directly via raw.githubusercontent.com URLs.

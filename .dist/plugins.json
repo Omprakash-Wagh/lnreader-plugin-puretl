@@ -1,0 +1,13 @@
+[
+  {
+    "id": "pureLoveTranslations",
+    "name": "Pure Love Translations",
+    "site": "https://puretl.com",
+    "lang": "English",
+    "version": "1.0.0",
+    "url": "https://raw.githubusercontent.com/LNReader/lnreader-plugins/master/.js/src/plugins/english/pureLoveTranslations.js",
+    "iconUrl": "https://raw.githubusercontent.com/LNReader/lnreader-plugins/master/public/static/src/en/pureLoveTranslations/icon.png",
+    "hasUpdate": false,
+    "hasSettings": false
+  }
+]
