@@ -92,17 +92,15 @@ lnreader-plugin-puretl/
 
 ### Method 1: Custom Plugin Repository (Direct In-App Install)
 
-1. Fork or push this repository to your GitHub account (e.g. `https://github.com/<your-username>/lnreader-plugin-puretl`).
-2. Run the build or push to `master` branch to trigger GitHub Actions (which builds and publishes to the `plugins` branch).
-3. In the LNReader app on Android:
-   - Navigate to **More** -> **Settings** -> **Plugins**.
-   - Tap **Plugin Repositories** -> **Add Repository** (`+`).
-   - Enter your repository's raw manifest URL:
-     ```
-     https://raw.githubusercontent.com/<your-username>/lnreader-plugin-puretl/plugins/v3.0.0/.dist/plugins.min.json
-     ```
-   - Tap **Add**.
-4. Go to the **Plugins** tab in the main navigation, switch to **English**, find **Pure Love Translations**, and tap **Install** (`⬇`).
+In the LNReader app on Android:
+1. Navigate to **More** -> **Settings** -> **Plugins**.
+2. Tap **Plugin Repositories** -> **Add Repository** (`+`).
+3. Enter your repository's raw manifest URL:
+   ```
+   https://raw.githubusercontent.com/Omprakash-Wagh/lnreader-plugin-puretl/master/.dist/plugins.min.json
+   ```
+4. Tap **Add**.
+5. Go to the **Plugins** tab in the main navigation, switch to **English**, find **Pure Love Translations**, and tap **Install** (`⬇`).
 
 ### Method 2: Contributing to the Official LNReader Repository
 
