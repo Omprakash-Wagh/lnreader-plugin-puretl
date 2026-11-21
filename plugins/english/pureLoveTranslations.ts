@@ -10,7 +10,7 @@ class PureLoveTranslationsPlugin implements Plugin.PluginBase {
   name = 'Pure Love Translations';
   icon = 'src/en/pureLoveTranslations/icon.png';
   site = 'https://puretl.com';
-  version = '1.0.0';
+  version = '1.0.1';
 
   filters = {
     status: {
@@ -461,39 +461,76 @@ class PureLoveTranslationsPlugin implements Plugin.PluginBase {
       textBlocks.each((_, block) => {
         const block$ = parseHTML($(block).html() || '');
 
-        // Remove unwanted sub-elements inside the block
-        block$('p, h3, h4, div').each((_, el) => {
-          const elText = block$(el).text().toLowerCase().trim();
+        // Remove embedded styles, scripts, noscripts, iframes
+        block$('style, script, noscript, iframe').remove();
 
-          // 1. Remove adblock appeals
+        const blockText = block$.text().trim().toLowerCase();
+
+        // 1. Skip block if the entire block is just an adblock appeal
+        if (
+          blockText.length < 500 &&
+          (blockText.includes('turning off adblock') ||
+            blockText.includes('turn off adblock') ||
+            blockText.includes('money generated from ads') ||
+            blockText.includes('support our translators by turning off adblock'))
+        ) {
+          return;
+        }
+
+        // 2. Skip block if the entire block is purely navigation
+        const alphaOnly = blockText.replace(/[^a-z]/g, '');
+        if (
+          blockText.length < 150 &&
+          (alphaOnly === 'backindexnext' ||
+            alphaOnly === 'charactersheetindexnext' ||
+            alphaOnly === 'indexnext' ||
+            alphaOnly === 'backindex' ||
+            alphaOnly === 'index' ||
+            alphaOnly === 'next' ||
+            alphaOnly === 'previous' ||
+            alphaOnly === 'back')
+        ) {
+          return;
+        }
+
+        // 3. Fine-grained removal inside paragraphs/headings (NEVER div, to avoid stripping wrapper containers!)
+        block$('p, h3, h4, h5, h6').each((_, el) => {
+          const pText = block$(el).text().trim().toLowerCase();
+
+          // Remove in-paragraph adblock appeals
           if (
-            elText.includes('turning off adblock') ||
-            elText.includes('turn off adblock') ||
-            elText.includes('money generated from ads') ||
-            elText.includes('support our translators by turning off adblock')
+            pText.length < 300 &&
+            (pText.includes('turning off adblock') ||
+              pText.includes('turn off adblock') ||
+              pText.includes('money generated from ads'))
           ) {
             block$(el).remove();
             return;
           }
 
-          // 2. Remove in-content navigation links
-          if (
-            (elText.includes('index') &&
-              (elText.includes('next') || elText.includes('back'))) ||
-            (elText.includes('character sheet') && elText.includes('next')) ||
-            elText === 'next' ||
-            elText === 'previous' ||
-            elText === 'index' ||
-            elText === 'back'
-          ) {
-            block$(el).remove();
-            return;
+          // Remove in-paragraph navigation (only if short text)
+          if (pText.length < 100) {
+            const pAlpha = pText.replace(/[^a-z]/g, '');
+            if (
+              pAlpha === 'backindexnext' ||
+              pAlpha === 'charactersheetindexnext' ||
+              pAlpha === 'indexnext' ||
+              pAlpha === 'backindex' ||
+              pAlpha === 'index' ||
+              pAlpha === 'next' ||
+              pAlpha === 'previous' ||
+              pAlpha === 'back'
+            ) {
+              block$(el).remove();
+              return;
+            }
           }
 
-          // 3. Remove site footer policy links if embedded
+          // Remove site footer policy links if embedded in paragraph
           if (
-            elText.includes('privacy policy') &&
-            elText.includes('terms of service')
+            pText.includes('privacy policy') &&
+            pText.includes('terms of service') &&
+            pText.length < 200
           ) {
             block$(el).remove();
             return;
