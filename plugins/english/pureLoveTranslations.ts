@@ -10,7 +10,7 @@ class PureLoveTranslationsPlugin implements Plugin.PluginBase {
   name = 'Pure Love Translations';
   icon = 'src/en/pureLoveTranslations/icon.png';
   site = 'https://puretl.com';
-  version = '1.0.1';
+  version = '1.0.2';
 
   filters = {
     status: {
@@ -453,12 +453,49 @@ class PureLoveTranslationsPlugin implements Plugin.PluginBase {
       return `<h1>${chapterTitle}</h1><p>Chapter content could not be loaded.</p>`;
     }
 
-    // Extract individual content blocks from Squarespace layout
-    const textBlocks = articleBody.find('.sqs-block-html, .html-block');
+    // Extract individual content blocks (HTML text and in-chapter illustrations) in reading order
+    const blocks = articleBody.find(
+      '.sqs-block-html, .html-block, .sqs-block-image, .image-block',
+    );
     const cleanedHtmlParts: string[] = [];
 
-    if (textBlocks.length > 0) {
-      textBlocks.each((_, block) => {
+    if (blocks.length > 0) {
+      blocks.each((_, block) => {
+        const isImageBlock =
+          $(block).hasClass('sqs-block-image') ||
+          $(block).hasClass('image-block');
+
+        // Handle legitimate in-chapter illustrations, maps, and diagrams
+        if (isImageBlock) {
+          const img = $(block).find('img').first();
+          const src =
+            img.attr('data-src') ||
+            img.attr('data-image') ||
+            img.attr('src');
+          if (!src) return;
+
+          // Filter out author avatars, site header logos, favicons, social icons
+          if (
+            src.includes('memberAccountAvatars') ||
+            src.includes('favicon') ||
+            src.includes('HeaderMobile') ||
+            src.includes('PL-') ||
+            img.hasClass('author-avatar-image') ||
+            $(block).hasClass('author-avatar')
+          ) {
+            return;
+          }
+
+          const alt = img.attr('alt') || 'Illustration';
+          const caption = $(block).find('figcaption, .image-caption').text().trim();
+          let imgHtml = `<p style="text-align: center;"><img src="${src}" alt="${alt}" style="max-width: 100%; height: auto;" /></p>`;
+          if (caption) {
+            imgHtml += `<p style="text-align: center; font-style: italic;"><small>${caption}</small></p>`;
+          }
+          cleanedHtmlParts.push(imgHtml);
+          return;
+        }
+
         const block$ = parseHTML($(block).html() || '');
 
         // Remove embedded styles, scripts, noscripts, iframes
